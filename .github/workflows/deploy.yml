@@ -36,13 +36,13 @@ jobs:
       - name: Build Docker image
         run: |
           echo "Building Docker image..."
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/simple-python-app:latest .
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/simple-python-app/python-app:latest .
 
-      # Push Docker image to GCR
-      - name: Push Docker image to GCR
+# Push Docker image to Artifact Registry
+      - name: Push Docker image to Artifact Registry
         run: |
-          echo "Pushing Docker image to GCR..."
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/simple-python-app:latest
+          echo "Pushing Docker image to Artifact Registry..."
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/simple-python-app/python-app:latest
 
       # Set up kubectl
       - name: Set up kubectl
