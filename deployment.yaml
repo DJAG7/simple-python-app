@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: python-app
+  template:
+    metadata:
+      labels:
+        app: python-app
+    spec:
+      containers:
+      - name: python-app
+        image: gcr.io/infogain-kubernetes1/python-app:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: OPENWEATHER_API_KEY
+          value: 6b060e25a70ea1cf0f30aed6fc75b970  # Replace with your actual API key or use Kubernetes secrets for better security
