@@ -62,16 +62,6 @@ jobs:
           echo "Fetching GKE credentials..."
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --zone ${{ secrets.GKE_ZONE }}
 
-      # Add firewall rule to allow HTTP traffic (port 80)
-      - name: Configure firewall rule for HTTP access
-        run: |
-          echo "Setting up firewall rule to allow HTTP access..."
-          gcloud compute firewall-rules create allow-http \
-            --allow tcp:80 \
-            --target-tags=gke-python-app \
-            --description="Allow HTTP traffic on port 80" \
-            --project=${{ secrets.GCP_PROJECT_ID }}
-
       # Deploy to GKE
       - name: Deploy to GKE
         run: |
