@@ -31,15 +31,11 @@ jobs:
         run: |
           gcloud auth configure-docker us-central1-docker.pkg.dev
 
-      # Build Docker image
-      - name: Build Docker image
+      # Build and push Docker image to Artifact Registry
+      - name: Build and Push Docker image
         run: |
           echo "Building Docker image..."
           docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/simple-python-app/python-app:latest .
-
-      # Push Docker image to Artifact Registry
-      - name: Push Docker image to Artifact Registry
-        run: |
           echo "Pushing Docker image to Artifact Registry..."
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/simple-python-app/python-app:latest
 
@@ -65,4 +61,4 @@ jobs:
       - name: Deploy to GKE
         run: |
           echo "Updating deployment in GKE..."
-          kubectl set image deployment/python-app-cluster python-app=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/simple-python-app/python-app:latest
+          kubectl apply -f deployment.yaml
