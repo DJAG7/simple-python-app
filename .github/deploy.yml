@@ -1,0 +1,58 @@
+name: CI/CD Pipeline for Weather App
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Google Cloud SDK
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      # Configure Docker for GCR
+      - name: Configure Docker for GCR
+        run: |
+          echo "Configuring Docker authentication..."
+          gcloud auth configure-docker
+
+      # Build Docker image
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/python-app:latest .
+
+      # Push Docker image to GCR
+      - name: Push Docker image to GCR
+        run: |
+          echo "Pushing Docker image to GCR..."
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/python-app:latest
+
+      # Set up kubectl
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      # Get GKE credentials
+      - name: Get GKE credentials
+        run: |
+          echo "Fetching GKE credentials..."
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --zone ${{ secrets.GKE_ZONE }}
+
+      # Deploy to GKE
+      - name: Deploy to GKE
+        run: |
+          echo "Updating deployment in GKE..."
+          kubectl set image deployment/python-app python-app=gcr.io/${{ secrets.GCP_PROJECT_ID }}/python-app:latest
