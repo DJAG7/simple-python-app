@@ -26,11 +26,11 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      # Configure Docker for GCR
-      - name: Configure Docker for GCR
+      # Configure Docker for Artifact Registry
+      - name: Configure Docker for Artifact Registry
         run: |
-          echo "Configuring Docker authentication..."
-          gcloud auth configure-docker
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
 
       # Build Docker image
       - name: Build Docker image
