@@ -50,17 +50,17 @@ jobs:
         with:
           version: 'latest'
 
+      # Install gke-gcloud-auth-plugin
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          echo "Installing gke-gcloud-auth-plugin..."
+          gcloud components install gke-gcloud-auth-plugin --quiet
+
       # Get GKE credentials
       - name: Get GKE credentials
         run: |
           echo "Fetching GKE credentials..."
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --zone ${{ secrets.GKE_ZONE }}
-
-      # Deploy to GKE
-      - name: Deploy to GKE
-        run: |
-          echo "Updating deployment in GKE..."
-          kubectl set image deployment/python-app python-app=gcr.io/${{ secrets.GCP_PROJECT_ID }}/simple-python-app:latest
 
       # Add firewall rule to allow HTTP traffic (port 80)
       - name: Configure firewall rule for HTTP access
@@ -71,3 +71,9 @@ jobs:
             --target-tags=gke-python-app \
             --description="Allow HTTP traffic on port 80" \
             --project=${{ secrets.GCP_PROJECT_ID }}
+
+      # Deploy to GKE
+      - name: Deploy to GKE
+        run: |
+          echo "Updating deployment in GKE..."
+          kubectl set image deployment/python-app python-app=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/simple-python-app/python-app:latest
