@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: python-app
-        image: gcr.io/infogain-kubernetes1/python-app:latest
+        image: gcr.io/infogain-kubernetes1/simple-python-app/python-app:latest
         ports:
         - containerPort: 5000
         env:
